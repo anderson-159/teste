@@ -6,29 +6,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/animal")
-public class AnimalController {
+@RequestMapping("/carro")
+public class CarroController {
 
     @GetMapping("/detalhe")
     public Map<String, String> detalhe(@RequestParam String nome) {
         return new HashMap<>() {{
             put("nome", nome);
-            put("idade", "100");
+            put("cor", "prata");
         }};
     }
     @PostMapping
     public String criar(@RequestBody Map<String, String> dados) {
-        System.out.println("Nome do animal: "+ dados.get("nome"));
-        return "Animal "+ dados.get("nome") + " criado com sucesso...";
+        System.out.println("Nome do carro: "+ dados.get("nome"));
+        return "Carro "+ dados.get("nome") + " criado com sucesso...";
     }
 
     @PutMapping
     public String editar(@RequestBody Map<String , String> dados) {
-        System.out.println("Nome do animal: "+ dados.get("nome"));
-        return "Animal "+ dados.get("nome") + " editado com sucesso...";
+        System.out.println("Nome do carro: "+ dados.get("nome"));
+        return "Carro "+ dados.get("nome") + " editado com sucesso...";
     }
     @DeleteMapping
     public String deletar(@RequestParam String nome) {
-        return "Animal "+ nome +" deletado com sucesso...";
+
+        return "Carro "+ nome +" deletado com sucesso...";
     }
 }
