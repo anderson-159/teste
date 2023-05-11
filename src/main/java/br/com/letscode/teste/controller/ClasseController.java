@@ -1,59 +1,48 @@
 package br.com.letscode.teste.controller;
 
-import br.com.letscode.teste.dto.CarroDTO;
+
+import br.com.letscode.teste.dto.ClasseDTO;
 import br.com.letscode.teste.dto.FactoryDTO;
 import br.com.letscode.teste.dto.ResultadoDTO;
-import br.com.letscode.teste.service.CarroService;
 import br.com.letscode.teste.service.ClasseService;
 import br.com.letscode.teste.service.exception.ClasseNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/carro")
-public class CarroController extends BaseController {
-    @Autowired
-    private CarroService carroService;
-    @Autowired
-    private ClasseService classeService;
-    @GetMapping("/lista")
-    public List<CarroDTO> listar(@RequestParam String filtro) {
-        if (filtro != null && !filtro.isEmpty()) {
-            //return carroService.filterByNome(filtro);
-        }
-        return FactoryDTO.carrosToDTO(carroService.listar());
-    }
-    @GetMapping
-    public CarroDTO detalhar(@RequestParam String nome) { return CarroDTO.builder().nome(nome).placa(150).build(); }
+@RequestMapping("/classe")
+public class ClasseController extends BaseController {
 
-    @PostMapping
-    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid CarroDTO carroDTO) {
-       /* if (!classeService.contains(carroDTO.getClasse().getNome())) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    new ResultadoDTO()
-                            .putError("classe", "Não existe.")
-            );
-        } */
-        System.out.println("Nome do Carro: "+ carroDTO.getNome());
-        carroService.criar(FactoryDTO.dtoToEntity(carroDTO));
-        return ResponseEntity.ok(
-                new ResultadoDTO()
-                        .setResultado(true)
-                        .setMensagem("Carro "+ carroDTO.getNome() +" criado com sucesso..." )
-        );
+    private ClasseService classeService;
+    public ClasseController(ClasseService classeService) {
+        this.classeService = classeService;
     }
+    @GetMapping("/listar")
+    public ResponseEntity<List<ClasseDTO>> listar() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(FactoryDTO.classesToDTO(classeService.listar()));
+    }
+    @PostMapping
+    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid ClasseDTO classeDTO) {
+        classeService.criar(FactoryDTO.dtoToEntity(classeDTO));
+            return ResponseEntity.ok(
+                    new ResultadoDTO()
+                                    .setResultado(true)
+                                    .setMensagem("A classe do carro foi criada com sucesso.")
+                    );
+        }
+
     @PutMapping
     public ResponseEntity<ResultadoDTO> editar(
             @RequestParam(name = "uid") String uid,
-            @RequestBody @Valid CarroDTO carroDTO
+            @RequestBody @Valid ClasseDTO classeDTO
     ) {
         try {
-            carroService.editar(uid, FactoryDTO.dtoToEntity(carroDTO));
+            classeService.editar(uid, FactoryDTO.dtoToEntity(classeDTO));
         } catch (ClasseNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -66,15 +55,14 @@ public class CarroController extends BaseController {
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
-                        .setMensagem("O carro "+ uid +" foi editada com sucesso")
+                        .setMensagem("A classe de carro "+ uid +" foi editada com sucesso")
         );
     }
-
     @DeleteMapping
     public ResponseEntity<ResultadoDTO> deletar(
             @RequestParam(name = "uid") String uid
     ) {
-        boolean resultado = carroService.deletar(uid);
+        boolean resultado = classeService.deletar(uid);
         if (resultado == false) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -83,12 +71,13 @@ public class CarroController extends BaseController {
                                     .setResultado(false)
                                     .setMensagem("A classe "+ uid +" nao foi encontrada.")
                     );
-        }
+            }
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
-                        .setMensagem("O uid do carro "+ uid +" foi removida com sucesso")
+                        .setMensagem("A classe do carro "+ uid +" foi removida com sucesso")
         );
     }
 }
+
 
